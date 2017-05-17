@@ -119,7 +119,7 @@ def parse_flagstat(summary_file, omit_pcr_dup_percent=False, omit_num_align_read
             align_perc   = mapped_reads/tot_reads
 
             if not omit_num_align_reads:
-                summary.append(("Aligned_Reads", mapped_reads))
+                summary.append(("Aligned_Reads", int(mapped_reads)))
 
             if not omit_aligned_percent:
                 summary.append(("Align_Perc", align_perc))
