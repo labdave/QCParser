@@ -200,4 +200,7 @@ class QCParser(object):
 
 
 if __name__=='__main__':
-    QCParser()
+    try:
+        QCParser()
+    except Exception:
+        sys.exit(1)

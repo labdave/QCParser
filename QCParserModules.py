@@ -281,9 +281,9 @@ def parse_bedtools_intersect(summary_file, target_type="Target"):
     input_table.mapped = input_table.mapped.apply(np.int16)
 
     # get percent of reads mapping to exon
-    key = "Pct_%s" % target_type
-    value = get_pct_reads_mapped(input_table)
-    summary.append((key, value))
+    reads_mapped, pct_mapped = get_pct_reads_mapped(input_table)
+    summary.append(("Reads_mapped_to_%s" % target_type, reads_mapped))
+    summary.append(("Pct_mapped_to_%s" % target_type, pct_mapped))
 
     return summary
 
@@ -336,7 +336,7 @@ def get_pct_reads_mapped(input_table):
     #takes a pandas dataframe as input
     total_bases = len(input_table) * 1.0
     covered_bases = len(input_table[input_table.mapped > 0]) * 1.0
-    return (covered_bases / total_bases)
+    return (int(covered_bases), (covered_bases / total_bases) * 100)
 
 
 
@@ -345,7 +345,7 @@ def get_pct_bases_covered_above_cutoff(input_table, cutoff):
     #takes a pandas dataframe as input
     total_bases = len(input_table) * 1.0
     covered_bases = len(input_table[input_table.depth >= cutoff])
-    return (covered_bases / total_bases)
+    return (covered_bases / total_bases) * 100
 
 
 
