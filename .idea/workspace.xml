@@ -20,8 +20,8 @@
       <file leaf-file-name="QCParserModules.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/QCParserModules.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="612">
-              <caret line="121" column="68" lean-forward="false" selection-start-line="121" selection-start-column="68" selection-end-line="121" selection-end-column="68" />
+            <state relative-caret-position="576">
+              <caret line="119" column="49" lean-forward="false" selection-start-line="119" selection-start-column="49" selection-end-line="119" selection-end-column="49" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -68,8 +68,8 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="2047" />
-    <option name="y" value="107" />
+    <option name="x" value="274" />
+    <option name="y" value="72" />
     <option name="width" value="1381" />
     <option name="height" value="1000" />
   </component>
@@ -344,7 +344,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="2047" y="107" width="1381" height="1000" extended-state="0" />
+    <frame x="274" y="72" width="1381" height="1000" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.10861694" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -631,8 +631,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/QCParserModules.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="612">
-          <caret line="121" column="68" lean-forward="false" selection-start-line="121" selection-start-column="68" selection-end-line="121" selection-end-column="68" />
+        <state relative-caret-position="576">
+          <caret line="119" column="49" lean-forward="false" selection-start-line="119" selection-start-column="49" selection-end-line="119" selection-end-column="49" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>

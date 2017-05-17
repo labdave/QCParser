@@ -113,11 +113,11 @@ def parse_flagstat(summary_file, omit_pcr_dup_percent=False, omit_num_align_read
             # get total duplicates
             tot_dups = float(line.split()[0])
             percent_dups = (tot_dups / tot_reads) * 100.0
+            summary.append(("PCR_Duplicates", int(tot_dups)))
             summary.append(("Percent_PCR_Duplicates", percent_dups))
         elif "mapped (" in line:
             mapped_reads = float(line.split()[0])
             align_perc   = mapped_reads/tot_reads
-
             if not omit_num_align_reads:
                 summary.append(("Aligned_Reads", int(mapped_reads)))
 
