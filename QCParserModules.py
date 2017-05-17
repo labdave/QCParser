@@ -224,6 +224,9 @@ def parse_samtools_depth(summary_file, cutoffs=[]):
 
     summary = []
 
+    # check and format cutoffs provided by user
+    cutoffs = format_samtools_depth_cutoffs(cutoffs)
+
     # check to see if file exists
     if not os.path.isfile(summary_file):
         raise ex.MissingSummaryFileError("Samtools Coverage Depth BAM", summary_file)
@@ -253,6 +256,9 @@ def parse_samtools_depth(summary_file, cutoffs=[]):
         summary.append((key, value))
 
     return summary
+
+
+
 
 
 
@@ -424,6 +430,15 @@ def check_samtools_depth_format(summary_file):
         raise ex.SummaryParseError("Samtools Coverage Depth", summary_file,
                                    "File provided is not output from samtools depth")
     coverage_file.close()
+
+
+def format_samtools_depth_cutoffs(cutoffs):
+    # formats cutoffs used in parsing samtools depth output
+    if len(cutoffs) == 0:
+        return cutoffs
+    # return sorted list of unique cutoffs
+    return sorted(list(set(cutoffs)))
+
 
 
 
