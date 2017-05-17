@@ -195,8 +195,19 @@ def parse_picard_insert_size_metrics(summary_file):
     for line in insert_size_file:
         # find line with number of reads input and surviving trimming
         if "FR" in line:
-            median_insert_size = float(line.strip().split()[0])
+            line = line.strip().split()
+
+            median_insert_size  = float(line[0])
+            mean_insert_size    = float(line[4])
+            sd_insert_size      = float(line[5])
+            min_insert_size     = float(line[2])
+            max_insert_size     = float(line[3])
+
+            summary.append(("Mean_Insert_Size", mean_insert_size))
             summary.append(("Median_Insert_Size", median_insert_size))
+            summary.append(("SD_Insert_Size", sd_insert_size))
+            summary.append(("Min_Insert_Size", min_insert_size))
+            summary.append(("Max_Insert_Size", max_insert_size))
 
     insert_size_file.close()
     return summary
