@@ -2,6 +2,7 @@ import os
 import Exceptions as ex
 import sys
 import pandas as pd
+import numpy as np
 
 
 
@@ -262,6 +263,12 @@ def parse_bedtools_intersect(summary_file, target_type="Target"):
                                 names=["chr", "start", "end", "header", "mq", "strand", "start2", "end2", "color",
                                        "passed", "length", "dummy", "mapped"], header=None, usecols=["mapped"])
 
+    # replace '.' with 0 for unmapped reads
+    input_table.mapped.replace(".","0",inplace=True)
+
+    # convert everything to int
+    input_table.mapped = input_table.mapped.apply(np.int16)
+
     # get percent of reads mapping to exon
     key = "Pct_%s" % target_type
     value = get_pct_reads_mapped(input_table)
@@ -317,7 +324,7 @@ def get_pct_reads_mapped(input_table):
     #helper function used by parse_bedtools intersect to determine the percentage of reads mapping to a target region
     #takes a pandas dataframe as input
     total_bases = len(input_table) * 1.0
-    covered_bases = len(input_table[input_table.mapped > 0])
+    covered_bases = len(input_table[input_table.mapped > 0]) * 1.0
     return (covered_bases / total_bases)
 
 
