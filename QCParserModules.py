@@ -22,6 +22,9 @@ def parse_fastqc(summary_file, fastq_type="", is_paired=True, omit_num_reads=Fal
     if fastq_type is not "":
         fastq_type = "_" + fastq_type
 
+    # add name of fastq file to output table
+    summary.append(("Fastq_Filename", summary_file))
+
     # open summary file
     fastqc_file = open(summary_file, "r")
     first_line = True
