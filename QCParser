@@ -50,13 +50,14 @@ class QCParser(object):
         parser.add_argument('--omitseqlen', action='store_true', dest="omit_seq_len", help="omit seq length distribution from summary")
         parser.add_argument('--omitgc', action='store_true', dest="omit_gc", help="omit gc content from summary" )
         parser.add_argument('--omittestresults', action='store_true', dest="omit_tests", help="omit reporting test results in summary")
+        parser.add_argument('--omitfilename', action='store_true', dest="omit_filename", help="omit reporting name of fastq file")
         parser.add_argument('--delimiter', action="store", dest="delim", default='\t', help="delimiter for output. DEFAULT=\\t")
 
         #parse arguments
         args = parser.parse_args(sys.argv[2:])
 
         #parser fastqc output
-        summary = qc.parse_fastqc(args.fastqc_text_output, args.output_header_suffix, args.is_paired, args.omit_num_reads, args.omit_low_qual, args.omit_seq_len, args.omit_gc, args.omit_tests)
+        summary = qc.parse_fastqc(args.fastqc_text_output, args.output_header_suffix, args.is_paired, args.omit_num_reads, args.omit_low_qual, args.omit_seq_len, args.omit_gc, args.omit_tests, args.omit_filename)
 
         #print to stdout
         qc.print_summary(summary, args.delim)

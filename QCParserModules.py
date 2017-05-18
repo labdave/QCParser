@@ -10,7 +10,7 @@ import numpy as np
 
 
 #parse text-based output from fastqc
-def parse_fastqc(summary_file, fastq_type="", is_paired=True, omit_num_reads=False, omit_num_low_qual=False, omit_seq_len=False, omit_gc=False, omit_test_results=False):
+def parse_fastqc(summary_file, fastq_type="", is_paired=True, omit_num_reads=False, omit_num_low_qual=False, omit_seq_len=False, omit_gc=False, omit_test_results=False, omit_filename=False):
 
     #initialize empty summary
     summary = []
@@ -22,18 +22,16 @@ def parse_fastqc(summary_file, fastq_type="", is_paired=True, omit_num_reads=Fal
     if fastq_type is not "":
         fastq_type = "_" + fastq_type
 
-    # add name of fastq file to output table
-    summary.append(("Fastq_Filename", summary_file))
 
     # open summary file
-    fastqc_file = open(summary_file, "r")
+    fastqc = open(summary_file, "r")
     first_line = True
 
     # results of FASTQC tests
     test_results = []
 
     # parse summary file and store results
-    for line in fastqc_file:
+    for line in fastqc:
         # strip newlines
         line = line.strip()
 
@@ -50,6 +48,10 @@ def parse_fastqc(summary_file, fastq_type="", is_paired=True, omit_num_reads=Fal
                 value = int(line.split()[2]) * 2
             else:
                 value = int(line.split()[2])
+
+        elif ("Filename" in line) and not omit_filename:
+            key   = "Fastq_Filename"
+            value = line.split()[1]
 
         elif ("flagged as poor quality" in line) and not omit_num_low_qual:
             key = "Num_Low_Quality_Reads"
@@ -85,7 +87,7 @@ def parse_fastqc(summary_file, fastq_type="", is_paired=True, omit_num_reads=Fal
     if not omit_test_results:
         summary.append(("FastQC_Test_Results" + fastq_type, ';'.join(test_results)))
 
-    fastqc_file.close()
+    fastqc.close()
 
     #return summary
     return summary
