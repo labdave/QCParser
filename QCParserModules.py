@@ -121,13 +121,36 @@ def parse_flagstat(summary_file, omit_pcr_dup_percent=False, omit_num_align_read
             summary.append(("PCR_Duplicates", int(tot_dups)))
             summary.append(("Percent_PCR_Duplicates", percent_dups))
         elif "mapped (" in line:
+            # Get number, percent of reads aligned
             mapped_reads = float(line.split()[0])
-            align_perc   = mapped_reads/tot_reads
+            align_perc   = (mapped_reads/tot_reads) * 100.0
             if not omit_num_align_reads:
                 summary.append(("Aligned_Reads", int(mapped_reads)))
 
             if not omit_aligned_percent:
                 summary.append(("Align_Perc", align_perc))
+
+        elif "singletons" in line:
+            # Get number, percent of singleton reads (mate doesn't map)
+            tot_singletons  = float(line.split()[0])
+            perc_singletons = (tot_singletons/tot_reads) * 100.0
+            summary.append(("Singleton_Reads", int(tot_singletons)))
+            summary.append(("Percent_Singletons", perc_singletons))
+
+        elif "properly paired" in line:
+            # Get number, percent of properly paired reads
+            tot_prop_paired     = float(line.split()[0])
+            perc_prop_paired    = (tot_prop_paired/tot_reads) * 100
+            summary.append(("Properly_Paired_Reads", int(tot_prop_paired)))
+            summary.append(("Percent_Properly_Paired", perc_prop_paired))
+
+        elif "with mate mapped to a different chr" in line and "(mapQ" not in line:
+            # Get number, percent of reads where mates map to different chromosome
+            tot_mate_diff_chrom  = float(line.split()[0])
+            perc_mate_diff_chrom = (tot_mate_diff_chrom/tot_reads) * 100.0
+            summary.append(("Reads_With_Mates_Mapped_Diff_Chrom", int(tot_mate_diff_chrom)))
+            summary.append(("Percent_Mates_Mapped_Diff_Chrom", perc_mate_diff_chrom))
+
 
         count += 1
 
