@@ -114,6 +114,11 @@ def parse_flagstat(summary_file, omit_pcr_dup_percent=False, omit_num_align_read
                                            "File provided is not output from samtools Flagstat")
             # get total reads
             tot_reads = float(line.split()[0])
+
+        elif "secondary" in line:
+            secondary_aligns = int(line.split()[0])
+            tot_reads -= secondary_aligns
+
         elif ("duplicates" in line) and not omit_pcr_dup_percent:
             # get total duplicates
             tot_dups = float(line.split()[0])
@@ -122,7 +127,7 @@ def parse_flagstat(summary_file, omit_pcr_dup_percent=False, omit_num_align_read
             summary.append(("Percent_PCR_Duplicates", percent_dups))
         elif "mapped (" in line:
             # Get number, percent of reads aligned
-            mapped_reads = float(line.split()[0])
+            mapped_reads = float(line.split()[0]) - secondary_aligns
             align_perc   = (mapped_reads/tot_reads) * 100.0
             if not omit_num_align_reads:
                 summary.append(("Aligned_Reads", int(mapped_reads)))
@@ -316,7 +321,6 @@ def parse_bedtools_intersect(summary_file, target_type="Target"):
 
     # get percent of reads mapping to exon
     reads_mapped, pct_mapped = get_pct_reads_mapped(input_table)
-    summary.append(("Reads_mapped_to_%s" % target_type, reads_mapped))
     summary.append(("Pct_mapped_to_%s" % target_type, pct_mapped))
 
     return summary
