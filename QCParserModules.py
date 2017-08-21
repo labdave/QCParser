@@ -94,7 +94,7 @@ def parse_fastqc(summary_file, fastq_type="", is_paired=True, omit_num_reads=Fal
 
 
 #parse samtools flagstat for PCR duplicates, Aligned reads, and alignment rate
-def parse_flagstat(summary_file, omit_pcr_dup_percent=False, omit_num_align_reads=False, omit_aligned_percent=False):
+def parse_flagstat(summary_file, omit_pcr_dup_percent=False, omit_num_align_reads=False, **kwargs):
 
     #init empty summary
     summary = []
@@ -122,39 +122,27 @@ def parse_flagstat(summary_file, omit_pcr_dup_percent=False, omit_num_align_read
         elif ("duplicates" in line) and not omit_pcr_dup_percent:
             # get total duplicates
             tot_dups = float(line.split()[0])
-            percent_dups = (tot_dups / tot_reads) * 100.0
             summary.append(("PCR_Duplicates", int(tot_dups)))
-            summary.append(("Percent_PCR_Duplicates", percent_dups))
         elif "mapped (" in line:
             # Get number, percent of reads aligned
             mapped_reads = float(line.split()[0]) - secondary_aligns
-            align_perc   = (mapped_reads/tot_reads) * 100.0
             if not omit_num_align_reads:
                 summary.append(("Aligned_Reads", int(mapped_reads)))
-
-            if not omit_aligned_percent:
-                summary.append(("Align_Perc", align_perc))
 
         elif "singletons" in line:
             # Get number, percent of singleton reads (mate doesn't map)
             tot_singletons  = float(line.split()[0])
-            perc_singletons = (tot_singletons/tot_reads) * 100.0
             summary.append(("Singleton_Reads", int(tot_singletons)))
-            summary.append(("Percent_Singletons", perc_singletons))
 
         elif "properly paired" in line:
             # Get number, percent of properly paired reads
             tot_prop_paired     = float(line.split()[0])
-            perc_prop_paired    = (tot_prop_paired/tot_reads) * 100
             summary.append(("Properly_Paired_Reads", int(tot_prop_paired)))
-            summary.append(("Percent_Properly_Paired", perc_prop_paired))
 
         elif "with mate mapped to a different chr" in line and "(mapQ" not in line:
             # Get number, percent of reads where mates map to different chromosome
             tot_mate_diff_chrom  = float(line.split()[0])
-            perc_mate_diff_chrom = (tot_mate_diff_chrom/tot_reads) * 100.0
             summary.append(("Reads_With_Mates_Mapped_Diff_Chrom", int(tot_mate_diff_chrom)))
-            summary.append(("Percent_Mates_Mapped_Diff_Chrom", perc_mate_diff_chrom))
 
 
         count += 1
@@ -165,7 +153,7 @@ def parse_flagstat(summary_file, omit_pcr_dup_percent=False, omit_num_align_read
 
 
 #parse trimmomatic output
-def parse_trimmomatic(summary_file, omit_reads_before_trimming=False, omit_reads_after_trimming=False, omit_percent_trimmed=False):
+def parse_trimmomatic(summary_file, omit_reads_before_trimming=False, omit_reads_after_trimming=False, **kwargs):
 
     #initialize summary list
     summary = []
@@ -203,8 +191,6 @@ def parse_trimmomatic(summary_file, omit_reads_before_trimming=False, omit_reads
             if not omit_reads_after_trimming:
                 summary.append(("Reads_After_Trimming", trimmed_reads))
 
-            if not omit_percent_trimmed:
-                summary.append(("Percent_Passed_Trimming", float(trimmed_reads)/input_reads))
             break
         #increment count
         count += 1
