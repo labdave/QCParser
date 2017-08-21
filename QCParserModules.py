@@ -116,7 +116,7 @@ def parse_flagstat(summary_file, omit_pcr_dup_percent=False, omit_num_align_read
             tot_reads = float(line.split()[0])
 
         elif "secondary" in line:
-            secondary_aligns = int(line.split()[0])
+            secondary_aligns = float(line.split()[0])
             tot_reads -= secondary_aligns
 
         elif ("duplicates" in line) and not omit_pcr_dup_percent:
