@@ -79,7 +79,7 @@ class QCParser(object):
         args = parser.parse_args(sys.argv[2:])
 
         #parse flagstat output
-        summary = qc.parse_flagstat(args.samtools_flagstat_output, args.omit_pcr_dup, args.omit_num_align, args.omit_align_rate)
+        summary = qc.parse_flagstat(args.samtools_flagstat_output, args.omit_pcr_dup, args.omit_num_align)
 
         #print to stdout
         qc.print_summary(summary, args.delim)
@@ -147,7 +147,7 @@ class QCParser(object):
         args = parser.parse_args(sys.argv[2:])
 
         # parse trimmomatic output
-        summary = qc.parse_trimmomatic(args.trimmomatic_output, args.omit_num_raw, args.omit_num_trimmed, args.omit_trim_rate)
+        summary = qc.parse_trimmomatic(args.trimmomatic_output, args.omit_num_raw, args.omit_num_trimmed)
 
         # print to stdout
         qc.print_summary(summary, args.delim)
