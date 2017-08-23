@@ -43,7 +43,7 @@ def parse_fastqc(summary_file, fastq_type="", is_paired=True, omit_num_reads=Fal
             first_line = False
 
         if ("Total Sequences" in line) and not omit_num_reads:
-            key = "Total_Read_Pairs"
+            key = "Total_Reads"
             if is_paired:
                 value = int(line.split()[2]) * 2
             else:
@@ -54,7 +54,7 @@ def parse_fastqc(summary_file, fastq_type="", is_paired=True, omit_num_reads=Fal
             value = line.split()[1]
 
         elif ("flagged as poor quality" in line) and not omit_num_low_qual:
-            key = "Num_Low_Quality_Reads"
+            key = "Low_Quality_Reads"
             if is_paired:
                 value = int(line.split()[5]) * 2
             else:
@@ -178,8 +178,8 @@ def parse_trimmomatic(summary_file, omit_reads_before_trimming=False, omit_reads
         elif "Surviving" in line:
             if is_paired:
                 #paired-end output
-                input_reads   = int(line.strip().split()[3])
-                trimmed_reads = int(line.strip().split()[6])
+                input_reads   = int(line.strip().split()[3]) * 2
+                trimmed_reads = int(line.strip().split()[6]) * 2
             else:
                 #single-end output
                 input_reads = int(line.strip().split()[2])
