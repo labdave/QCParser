@@ -4,14 +4,14 @@ import QCModules.BaseModule
 
 class TestModuleThree(QCModules.BaseModule):
 
-    DESCRIPTION = "Dis a testin' tool"
+    DESCRIPTION = "Dis a testin' tool THREE"
 
-    def __init__(self, command_line_args, **kwargs):
-        super(TestModuleThree, self).__init__(command_line_args, **kwargs)
+    def __init__(self, command_line_args):
+        super(TestModuleThree, self).__init__(command_line_args)
 
-    def get_arg_parser(self):
-        parser = argparse.ArgumentParser(description="Tools for parsing output from several commonly available bioinformatic tools")
-        parser.add_argument('--derp', action='store', dest="derp", help='tools to run')
+    def configure_arg_parser(self, base_parser):
+        base_parser.add_argument('--derp', action='store', dest="derp", help='tools to run')
+        return base_parser
 
     def run(self):
         pass

@@ -37,15 +37,15 @@ def configure_logging(verbosity):
 
     # Coloring the log levels
     if sys.stderr.isatty():
-        logging.addLevelName(logging.ERROR, "%s%s%s%s%s" % (BOLD, ERROR, "GAP_DAEMON_ERROR", END, END))
-        logging.addLevelName(logging.WARNING, "%s%s%s%s%s" % (BOLD, WARNING, "GAP_DAEMON_WARNING", END, END))
-        logging.addLevelName(logging.INFO, "%s%s%s%s%s" % (BOLD, INFO, "GAP_DAEMON_INFO", END, END))
-        logging.addLevelName(logging.DEBUG, "%s%s%s%s%s" % (BOLD, DEBUG, "GAP_DAEMON_DEBUG", END, END))
+        logging.addLevelName(logging.ERROR, "%s%s%s%s%s" % (BOLD, ERROR, "QC_PARSER_ERROR", END, END))
+        logging.addLevelName(logging.WARNING, "%s%s%s%s%s" % (BOLD, WARNING, "QC_PARSER_WARNING", END, END))
+        logging.addLevelName(logging.INFO, "%s%s%s%s%s" % (BOLD, INFO, "QC_PARSER_INFO", END, END))
+        logging.addLevelName(logging.DEBUG, "%s%s%s%s%s" % (BOLD, DEBUG, "QC_PARSER_DEBUG", END, END))
     else:
-        logging.addLevelName(logging.ERROR, "GAP_DAEMON_ERROR")
-        logging.addLevelName(logging.WARNING, "GAP_DAEMON_WARNING")
-        logging.addLevelName(logging.INFO, "GAP_DAEMON_INFO")
-        logging.addLevelName(logging.DEBUG, "GAP_DAEMON_DEBUG")
+        logging.addLevelName(logging.ERROR, "QC_PARSER_ERROR")
+        logging.addLevelName(logging.WARNING, "QC_PARSER_WARNING")
+        logging.addLevelName(logging.INFO, "QC_PARSER_INFO")
+        logging.addLevelName(logging.DEBUG, "QC_PARSER_DEBUG")
 
     # Setting the level of the logs
     level = [logging.ERROR, logging.WARNING, logging.INFO, logging.DEBUG][verbosity]
