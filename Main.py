@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import argparse
 import sys
-import logging
 
 import QCModules
 from Utils import import_submodules, configure_logging
@@ -24,23 +23,24 @@ def import_qc_parser_modules():
             # Get only modules which contain a class inheriting from BaseModule
             if module_class_name in module_obj.__dict__:
                 module_class = module_obj.__dict__[module_class_name]
-                if module_class in QCModules.BaseModule.__subclasses__():
-                    classes[module_class_name] = module_class
+                #if module_class in QCModules.BaseModule.__subclasses__():
+                classes[module_class_name] = module_class
     return classes
 
 def configure_base_arg_parser(available_modules, module_descriptions):
 
-    # Build usage string
+    # Build usage string based on descriptions of available modules detected
     usage_string = '''qcparser <tool> [tool_args]\nTools:\n'''
     for i in range(len(available_modules)):
-        usage_string += "\t%s\t%s\n" %( available_modules[i], module_descriptions[i])
+        usage_string += "\t%s\t\t%s\n" %( available_modules[i], module_descriptions[i])
     usage_string += "\nFurther tool level options can be found for each module."
 
-    # Create arg parser
-    parser = argparse.ArgumentParser(description="Tools for parsing output from several commonly available bioinformatic tools",
+    # Create base arg parser
+    parser = argparse.ArgumentParser(prog="QCParser",
+                                     description="Tools for parsing output from several commonly available bioinformatic tools",
                                      usage = '''%s''' % usage_string)
 
-    # Name of QCModule
+    # Add argument for name of QCModule
     parser.add_argument('module',
                         choices=available_modules,
                         help='QCParser module to run.')
@@ -59,14 +59,11 @@ def main():
     parser  = configure_base_arg_parser(module_names, module_descriptions)
     args    = parser.parse_args(sys.argv[1:2])
 
-    # Try to initialize QCParser Module class
+    # Try to initialize QCParser Module class and parse remaining command line arguments
     qc_module = qc_parser_modules[args.module](sys.argv[2:])
 
     # Configure logging levels
     configure_logging(qc_module.get_verbosity_level())
-    logging.debug("DEBUG A GO")
-    logging.info("INFO A GO")
-    logging.error("ERROR A GO")
 
     # Run QCParser module
     #qc_module.make_qc_report()

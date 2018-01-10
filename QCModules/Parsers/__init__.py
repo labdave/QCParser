@@ -1,1 +1,1 @@
-from QCModules.Parsers.BaseParser import BaseParser
+from BaseParser import BaseParser

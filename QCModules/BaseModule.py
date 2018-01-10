@@ -1,5 +1,11 @@
 import abc
 import argparse
+import os
+
+from QCReport import QCReport
+
+class QCParseException(Exception):
+    pass
 
 class BaseModule(object):
     __metaclass__ = abc.ABCMeta
@@ -14,12 +20,14 @@ class BaseModule(object):
         self.args   = self.parse_args(sys_argv)
 
         # Initialize empty QCReport
-        self.qc_report  = None
+        self.report  = QCReport()
 
     def parse_args(self, sys_argv):
 
         # Create base parser with verbosity option
-        arg_parser = argparse.ArgumentParser(description=self.DESCRIPTION)
+        arg_parser = argparse.ArgumentParser(prog=self.__class__.__name__,
+                                             description=self.DESCRIPTION)
+
         arg_parser.add_argument("-v",
                                 action='count',
                                 dest='verbosity_level',
@@ -36,12 +44,6 @@ class BaseModule(object):
         arg_parser = self.configure_arg_parser(arg_parser)
         return arg_parser.parse_args(sys_argv)
 
-    def get_qc_report(self):
-        return self.qc_report
-
-    def get_verbosity_level(self):
-        return self.args.verbosity_level
-
     @abc.abstractmethod
     def configure_arg_parser(self, base_parser):
         # Add additional arg parser options and return arg parser
@@ -52,4 +54,5 @@ class BaseModule(object):
         # Main module code goes here
         pass
 
-
+    def get_verbosity_level(self):
+        return self.args.verbosity_level

@@ -8,16 +8,16 @@ class QCReport:
         # Initialize empty report
         self.report = collections.OrderedDict()
 
-    def add_entry(self, sample, module, source_file, name, value):
+    def add_entry(self, sample, module, source_file, colname, value):
         # Add a data column for a sample to a QCReport
         if sample not in self.report:
             self.report[sample] = []
         self.report[sample].append({"Module"     :module,
                                     "Source"     :source_file,
-                                    "Name"       :name,
+                                    "Name"       :colname,
                                     "Value"      :value})
 
-    def add_row(self, sample, row):
+    def add_row(self, sample, entries):
         # Add a row of sample data to existing QCReport
 
         # Make sure sample isn't already in report
@@ -26,20 +26,20 @@ class QCReport:
             raise IOError("Attempt to add duplicate sample row to QCReport.")
 
         # Check row contains same number of columns
-        if len(row) != len(self.get_colnames()):
+        if len(entries) != len(self.get_colnames()):
             logging.error("Attempt to add row to QCReport with different number of columns (%s vs. %s)!" % (len(row), len(self.get_colnames())))
             raise IOError("Attempt to add row to QCReport with different number of columns!")
 
         # Check columns in same order
-        col_order = [x["Name"] for x in row]
+        col_order = [x["Name"] for x in entries]
         if "".join(self.get_colnames()) != "".join(col_order):
             logging.error("Attempt to add row to QCReport with different column order!")
             raise IOError("Attempt to add row to QCReport with different column order!")
 
         # Add sample data row to report
-        self.report[sample] = row
+        self.report[sample] = entries
 
-    def add_col(self, col_data):
+    def add_col(self, samples, entries):
         # Make sure column contains same number of rows
         if len(col_data) != len(self.get_rownames()):
             logging.error("Attempt to add column to QCReport with different number of samples (%s vs. %s)!" % (len(col_data.keys()), len(self.get_rownames())))
@@ -53,9 +53,6 @@ class QCReport:
 
         for sample, data in col_data.iteritems():
             self.report[sample].append(data)
-
-    def get_report(self):
-        return self.report
 
     def get_row(self, sample):
         return self.report[sample]
