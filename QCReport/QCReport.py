@@ -2,20 +2,75 @@ import logging
 import json
 import collections
 
+class QCReportError(Exception):
+    pass
+
 class QCReport:
 
     def __init__(self):
-        # Initialize empty report
-        self.report = collections.OrderedDict()
+        # Initialize report from existing dictionary or from empty dict
+        self.report     = {}
+
+    def get_sample_names(self):
+        return self.report.keys()
+
+    def get_colnames(self, sample):
+        # Get data colnames associated with a sample
+        return [x["Name"] for x in self.get_sample_data(sample)]
+
+    def get_sample_data(self, sample):
+        if sample not in self.get_sample_names():
+            logging.error("Sample '%s' not found in QCReport!")
+            raise QCReportError("Cannot get data of non-existant sample!")
+        return self.report[sample]
 
     def add_entry(self, sample, module, source_file, colname, value):
         # Add a data column for a sample to a QCReport
+        # Add sample if it doesn't exist in report
         if sample not in self.report:
             self.report[sample] = []
+
+        # Add data column if it doesn't exist in report
         self.report[sample].append({"Module"     :module,
                                     "Source"     :source_file,
                                     "Name"       :colname,
                                     "Value"      :value})
+
+    def add_entries(self, sample, data):
+        # Add multiple data columns to a QCReport
+        if sample not in self.report:
+            self.report[sample] = []
+        self.report[sample].extend(data)
+
+    def validate_schema(self):
+        # Determine whether QCReport is valid
+        pass
+
+    def is_square(self):
+        # Return True if all rows have same number of columns
+        row_len = -1
+        for sample in self.get_sample_names():
+            if row_len == -1:
+                row_len = len(self.get_colnames(sample))
+            else:
+                if len(self.get_colnames(sample)) != row_len:
+                    return False
+        return True
+
+    def is_ordered(self):
+        # Return True if columns in every row are in same order
+        row_order = ""
+        for sample in self.get_sample_names():
+            if row_order == "":
+                row_order = "_".join(self.get_colnames(sample))
+            elif "_".join(self.get_colnames(sample)) != row_order:
+                return False
+        return True
+
+    def __str__(self):
+        return json.dumps(self.report)
+
+
 
     def add_row(self, sample, entries):
         # Add a row of sample data to existing QCReport
@@ -63,7 +118,7 @@ class QCReport:
             col_data[sample] = data[index]
         return col_data
 
-    def get_colnames(self):
+    def get_colnames_old(self):
         if self.n_cols() == 0:
             return []
         return [ x["Name"] for x in self.report[self.get_rownames()[0]]]
@@ -71,7 +126,6 @@ class QCReport:
     def get_rownames(self):
         return self.report.keys()
 
-    def __str__(self):
-        return json.dumps(self.report)
+
 
 

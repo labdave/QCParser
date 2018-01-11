@@ -1,4 +1,5 @@
-from BaseParser import BaseParser, QCParseException
+from BaseParser import BaseParser
+from QCModules.BaseModule import QCParseException
 
 class FastQC(BaseParser):
 
@@ -8,10 +9,7 @@ class FastQC(BaseParser):
     def __init__(self, sys_args):
         super(BaseParser, self).__init__(sys_args)
 
-    def define_required_columns(self):
-        return ["Total_Reads", "LQ_Reads", "Read_Len", "GC", "FastQC_Tests"]
-
-    def parse_input(self):
+    def make_qc_report(self):
 
         # Parse Fastqc data
         first_line = True

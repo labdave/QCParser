@@ -1,8 +1,8 @@
 import abc
 import argparse
-import os
 
 from QCReport import QCReport
+from Utils import configure_logging
 
 class QCParseException(Exception):
     pass
@@ -44,6 +44,23 @@ class BaseModule(object):
         arg_parser = self.configure_arg_parser(arg_parser)
         return arg_parser.parse_args(sys_argv)
 
+    def run(self):
+        # Run main program
+
+        # Configure logging levels
+        configure_logging(self.args.verbosity_level)
+
+        # Make qc report
+        self.make_qc_report()
+
+        # Get string representation of QCReport for printing to stdout
+        self.output_qc_report()
+
+    def output_qc_report(self):
+        # By default print a JSON-formatted string of QCReport
+        # Can be overridden by different classes to output formats (e.g. table)
+        print self.report
+
     @abc.abstractmethod
     def configure_arg_parser(self, base_parser):
         # Add additional arg parser options and return arg parser
@@ -54,5 +71,4 @@ class BaseModule(object):
         # Main module code goes here
         pass
 
-    def get_verbosity_level(self):
-        return self.args.verbosity_level
+

@@ -3,7 +3,7 @@ import argparse
 import sys
 
 import QCModules
-from Utils import import_submodules, configure_logging
+from Utils import import_submodules
 
 def import_qc_parser_modules():
     # Dynamically import and return all QCParser classes contained in the QCModules package
@@ -63,13 +63,7 @@ def main():
     qc_module = qc_parser_modules[args.module](sys.argv[2:])
 
     # Configure logging levels
-    configure_logging(qc_module.get_verbosity_level())
-
-    # Run QCParser module
-    #qc_module.make_qc_report()
-
-    # Output qc report to stdout
-    #print qc_module.get_qc_report()
+    #qc_module.run()
 
 if __name__=='__main__':
     main()
