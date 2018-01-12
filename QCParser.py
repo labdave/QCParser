@@ -63,7 +63,7 @@ def main():
     qc_module = qc_parser_modules[args.module](sys.argv[2:])
 
     # Configure logging levels
-    #qc_module.run()
+    qc_module.run()
 
 if __name__=='__main__':
     main()

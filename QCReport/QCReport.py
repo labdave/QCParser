@@ -1,28 +1,15 @@
 import logging
 import json
-import collections
 
 class QCReportError(Exception):
     pass
 
 class QCReport:
 
-    def __init__(self):
+    def __init__(self, report=None):
         # Initialize report from existing dictionary or from empty dict
-        self.report     = {}
-
-    def get_sample_names(self):
-        return self.report.keys()
-
-    def get_colnames(self, sample):
-        # Get data colnames associated with a sample
-        return [x["Name"] for x in self.get_sample_data(sample)]
-
-    def get_sample_data(self, sample):
-        if sample not in self.get_sample_names():
-            logging.error("Sample '%s' not found in QCReport!")
-            raise QCReportError("Cannot get data of non-existant sample!")
-        return self.report[sample]
+        self.report     = {} if report is None else report
+        self.validate()
 
     def add_entry(self, sample, module, source_file, colname, value):
         # Add a data column for a sample to a QCReport
@@ -42,9 +29,90 @@ class QCReport:
             self.report[sample] = []
         self.report[sample].extend(data)
 
-    def validate_schema(self):
+    def rbind(self, qc_report):
+        # Append all Samples from another QCReport
+        # Check to make sure Reports contain same number of columns
+        if self.n_columns() != qc_report.n_columns():
+            logging.error("Rbind error: QCReports have differing number of columns (%s vs %s)" % (self.n_columns(), qc_report.n_columns()))
+            raise QCReportError("Unable to rbind QCReports!")
+
+        for sample in qc_report.get_sample_names():
+            # Make sure sample doesn't already exist
+            if sample in self.get_sample_names():
+                logging.error("Rbind error: Duplicate sample: %s" % sample)
+                raise QCReportError("Unable to rbind QCReports!")
+            # Add data from sample to existing QCReport
+            self.add_entries(sample, data=qc_report.get_sample_data(sample))
+
+        # Validate to make sure QCReport is still valid
+        self.validate()
+
+    def cbind(self, qc_report):
+        # Append all columns from another QCReport
+        # Check to make sure reports contain same number of rows
+        if self.n_samples() != qc_report.n_samples():
+            logging.error("Cbind error: QCReports have differing number of samples (%s vs %s)" % (self.n_samples(), qc_report.n_samples()))
+            raise QCReportError("Unable to rbind QCReports!")
+
+        for sample in qc_report.get_sample_names():
+            # Check to make sure sample exists in current report
+            if sample not in self.get_sample_names():
+                logging.error("Cbind error: Sample '%s' doesn't appear in both reports!" % sample)
+                raise QCReportError("Unable to cbind QCReports!")
+
+            # Add data from sampe to existing QCReport
+            self.add_entries(sample, data=qc_report.get_sample_data(sample))
+
+        # Validate to make sure QCReport is still valid
+        self.validate()
+
+    def get_sample_names(self):
+        return self.report.keys()
+
+    def get_colnames(self, sample):
+        # Get data colnames associated with a sample
+        return [x["Name"] for x in self.get_sample_data(sample)]
+
+    def get_sample_data(self, sample):
+        if sample not in self.get_sample_names():
+            logging.error("Sample '%s' not found in QCReport!")
+            raise QCReportError("Cannot get data of non-existant sample!")
+        return self.report[sample]
+
+    def get_entry(self, sample, index):
+        sample_data = self.get_sample_data(sample)
+        if index >= len(sample_data) or index < 0:
+            logging.error("Invalid QCReport column index: %s" % index)
+            raise QCReportError("Invalid QCReport column index!")
+        return sample_data[index]
+
+    def n_samples(self):
+        return len(self.get_sample_names())
+
+    def n_columns(self):
+        if len(self.get_sample_names()) == 0:
+            return 0
+        return len(self.get_colnames(self.get_sample_names()[0]))
+
+    def validate(self):
         # Determine whether QCReport is valid
-        pass
+        for sample_name, sample_data in self.report.iteritems():
+            # Make sure every data point in every sample row contains only the required fields
+            for sample_column in sample_data:
+                if not "".join(sorted(sample_column.keys())) == "ModuleNameSourceValue":
+                    logging.error("Entry in QCReport for sample %s does not contain required columns!" % sample_name)
+                    raise QCReportError("Invalid QCReport schema.")
+
+        # Check to make sure QCReport is square
+        if not self.is_square():
+            # Check if
+            logging.error("QCReport is not square! Not all rows have same number of columns!")
+            raise QCReportError("Invalid QCReport! Not all rows have same number of columns!")
+
+        # Check to make sure all rows in QCReport have columns in same order
+        if not self.is_ordered():
+            logging.error("QCReport is not ordered! Data columns are not same for every sample or are not in same order!")
+            raise QCReportError("Invalid QCReport! Data columns are not same for every sample or are not in same order!")
 
     def is_square(self):
         # Return True if all rows have same number of columns
@@ -72,59 +140,60 @@ class QCReport:
 
 
 
-    def add_row(self, sample, entries):
-        # Add a row of sample data to existing QCReport
 
-        # Make sure sample isn't already in report
-        if sample in self.report:
-            logging.error("Attempt to add duplicate sample row to QCReport: %s!" % sample)
-            raise IOError("Attempt to add duplicate sample row to QCReport.")
-
-        # Check row contains same number of columns
-        if len(entries) != len(self.get_colnames()):
-            logging.error("Attempt to add row to QCReport with different number of columns (%s vs. %s)!" % (len(row), len(self.get_colnames())))
-            raise IOError("Attempt to add row to QCReport with different number of columns!")
-
-        # Check columns in same order
-        col_order = [x["Name"] for x in entries]
-        if "".join(self.get_colnames()) != "".join(col_order):
-            logging.error("Attempt to add row to QCReport with different column order!")
-            raise IOError("Attempt to add row to QCReport with different column order!")
-
-        # Add sample data row to report
-        self.report[sample] = entries
-
-    def add_col(self, samples, entries):
-        # Make sure column contains same number of rows
-        if len(col_data) != len(self.get_rownames()):
-            logging.error("Attempt to add column to QCReport with different number of samples (%s vs. %s)!" % (len(col_data.keys()), len(self.get_rownames())))
-            raise IOError("Attempt to add column to QCReport with different number of samples!")
-
-        # Make sure samples are in same order
-        row_order = col_data.keys()
-        if "".join(self.get_rownames()) != "".join(row_order):
-            logging.error("Attempt to add col to QCReport with different sample order!")
-            raise IOError("Attempt to add col to QCReport with different sample order!")
-
-        for sample, data in col_data.iteritems():
-            self.report[sample].append(data)
-
-    def get_row(self, sample):
-        return self.report[sample]
-
-    def get_col(self, index):
-        col_data = collections.OrderedDict()
-        for sample, data in self.report.iteritems():
-            col_data[sample] = data[index]
-        return col_data
-
-    def get_colnames_old(self):
-        if self.n_cols() == 0:
-            return []
-        return [ x["Name"] for x in self.report[self.get_rownames()[0]]]
-
-    def get_rownames(self):
-        return self.report.keys()
+    # def add_row(self, sample, entries):
+    #     # Add a row of sample data to existing QCReport
+    #
+    #     # Make sure sample isn't already in report
+    #     if sample in self.report:
+    #         logging.error("Attempt to add duplicate sample row to QCReport: %s!" % sample)
+    #         raise IOError("Attempt to add duplicate sample row to QCReport.")
+    #
+    #     # Check row contains same number of columns
+    #     if len(entries) != len(self.get_colnames()):
+    #         logging.error("Attempt to add row to QCReport with different number of columns (%s vs. %s)!" % (len(row), len(self.get_colnames())))
+    #         raise IOError("Attempt to add row to QCReport with different number of columns!")
+    #
+    #     # Check columns in same order
+    #     col_order = [x["Name"] for x in entries]
+    #     if "".join(self.get_colnames()) != "".join(col_order):
+    #         logging.error("Attempt to add row to QCReport with different column order!")
+    #         raise IOError("Attempt to add row to QCReport with different column order!")
+    #
+    #     # Add sample data row to report
+    #     self.report[sample] = entries
+    #
+    # def add_col(self, samples, entries):
+    #     # Make sure column contains same number of rows
+    #     if len(col_data) != len(self.get_rownames()):
+    #         logging.error("Attempt to add column to QCReport with different number of samples (%s vs. %s)!" % (len(col_data.keys()), len(self.get_rownames())))
+    #         raise IOError("Attempt to add column to QCReport with different number of samples!")
+    #
+    #     # Make sure samples are in same order
+    #     row_order = col_data.keys()
+    #     if "".join(self.get_rownames()) != "".join(row_order):
+    #         logging.error("Attempt to add col to QCReport with different sample order!")
+    #         raise IOError("Attempt to add col to QCReport with different sample order!")
+    #
+    #     for sample, data in col_data.iteritems():
+    #         self.report[sample].append(data)
+    #
+    # def get_row(self, sample):
+    #     return self.report[sample]
+    #
+    # def get_col(self, index):
+    #     col_data = collections.OrderedDict()
+    #     for sample, data in self.report.iteritems():
+    #         col_data[sample] = data[index]
+    #     return col_data
+    #
+    # def get_colnames_old(self):
+    #     if self.n_cols() == 0:
+    #         return []
+    #     return [ x["Name"] for x in self.report[self.get_rownames()[0]]]
+    #
+    # def get_rownames(self):
+    #     return self.report.keys()
 
 
 
