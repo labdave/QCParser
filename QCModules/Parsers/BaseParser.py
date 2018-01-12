@@ -1,9 +1,13 @@
 import os
 import argparse
+import logging
+import abc
 
-from QCModules import BaseModule
+from QCModules import BaseModule, QCParseException
 
 class BaseParser(BaseModule):
+
+    __metaclass__ = abc.ABCMeta
 
     # Description of input file that will be parsed
     # Should be overridden by inheriting classes to be more specific
@@ -17,9 +21,6 @@ class BaseParser(BaseModule):
 
         # Get sample name
         self.sample_name    = self.args.sample_name
-
-        # Define colnames that must be present in QCReport after parsing
-        self.required_cols  = self.define_required_columns()
 
     def configure_arg_parser(self, base_parser):
 
@@ -54,11 +55,18 @@ class BaseParser(BaseModule):
         return base_parser
 
     def make_qc_report(self):
-        # Placeholder to be implemented by extending parsers
-        raise NotImplementedError("Parser class %s did not implement method make_qc_report!" % self.__class__.__name__)
+        # Parse input
+        self.parse_input()
 
-    def output_qc_report(self):
-        print self.report
+        # See whether all required fields made it into report
+        report_complete = True
+        for required_col in self.define_required_colnames():
+            if required_col not in self.report.get_colnames(self.sample_name):
+                logging.error("Required column not parsed from output: %s" % required_col)
+                report_complete = False
+
+        if not report_complete:
+            raise QCParseException("One or more required columns was not parsed from the input!")
 
     def add_entry(self, colname, value):
         # Wrapper method for class
@@ -67,6 +75,14 @@ class BaseParser(BaseModule):
                               source_file=self.input_file,
                               colname=colname,
                               value=value)
+
+    @abc.abstractmethod
+    def parse_input(self):
+        pass
+
+    @abc.abstractmethod
+    def define_required_colnames(self):
+        pass
 
 
 
