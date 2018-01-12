@@ -7,14 +7,15 @@ class FastQC(BaseParser):
     INPUT_FILE_DESC = "FastQC output file (fastqc_data.txt)"
 
     def __init__(self, sys_args):
-        super(BaseParser, self).__init__(sys_args)
+        super(FastQC, self).__init__(sys_args)
 
-    def make_qc_report(self):
+    def parse_input(self):
 
         # Parse Fastqc data
-        first_line = True
-        test_results = []
-        colname, value = None
+        first_line      = True
+        test_results    = []
+        colname         = None
+        value           = None
 
         with open(self.input_file, "r") as fh:
 
@@ -62,5 +63,8 @@ class FastQC(BaseParser):
 
         # Add FastQC test results
         self.add_entry(colname="FastQC_Tests", value=";".join(test_results))
+
+    def define_required_colnames(self):
+        return ["FastQC_Tests", "Total_Reads", "LQ_Reads", "Read_Len", "GC"]
 
 
