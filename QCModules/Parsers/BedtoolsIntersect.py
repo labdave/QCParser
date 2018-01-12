@@ -10,9 +10,9 @@ class BedtoolsIntersect(BaseParser):
     INPUT_FILE_DESC = "Bedtools intersect output (produced with -c, -wa flags)"
 
     def __init__(self, sys_args):
-        super(BaseParser, self).__init__(sys_args)
+        super(BedtoolsIntersect, self).__init__(sys_args)
 
-    def make_qc_report(self):
+    def parse_input(self):
 
         # Names to associated with input columns
         input_column_names = ["chr", "start", "end", "header", "mq", "strand", "start2", "end2", "color", "passed", "length", "dummy", "mapped"]
@@ -45,3 +45,6 @@ class BedtoolsIntersect(BaseParser):
         total_bases = len(input_table) * 1.0
         covered_bases = len(input_table[input_table.mapped > 0]) * 1.0
         return int(covered_bases), (covered_bases / total_bases) * 100
+
+    def define_required_colnames(self):
+        return ["Num_Mapped_to_Target", "Pct_Mapped_to_Target"]
