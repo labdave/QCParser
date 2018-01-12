@@ -1,8 +1,10 @@
 import logging
 import os
 import argparse
+import json
 
-from QCModules import BaseModule, QCParseException
+from QCModules import BaseModule
+from QCReport import QCReportHelper
 
 class Cbind(BaseModule):
 
@@ -37,8 +39,20 @@ class Cbind(BaseModule):
                                  type=file_type,
                                  required=True,
                                  help="Space-delimited list of QCReport file paths.")
-
         return base_parser
 
     def make_qc_report(self):
-        pass
+
+        # Parse input files as QCReports
+        reports = self.parse_input_reports()
+
+        # Get first report
+        self.report = reports.pop(0)
+
+        # Rbind successive reports to next report
+        for new_report in reports:
+            self.report.cbind(new_report)
+
+    def parse_input_reports(self):
+        # Parse input files into JSON format
+        return [QCReportHelper.load(input_file) for input_file in self.input_files]
