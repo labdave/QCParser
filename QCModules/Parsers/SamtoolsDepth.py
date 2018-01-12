@@ -10,7 +10,7 @@ class SamtoolsDepth(BaseParser):
     INPUT_FILE_DESC = "Samtools depth output [Chr Pos Depth]"
 
     def __init__(self, sys_args):
-        super(BaseParser, self).__init__(sys_args)
+        super(SamtoolsDepth, self).__init__(sys_args)
 
         # Get cutoffs for determining coverage depth
         self.cutoffs = self.__format_cutoffs(self.args.cutoffs)
@@ -29,7 +29,7 @@ class SamtoolsDepth(BaseParser):
                                  help="Determine percentage of bases covered above this depth (INT). Can be specified multiple times for multiple cutoffs.")
         return base_parser
 
-    def make_qc_report(self):
+    def parse_input(self):
 
         # Get input table as pandas data frame
         try:
@@ -53,6 +53,9 @@ class SamtoolsDepth(BaseParser):
             colname = "pct_cov_gt_%d" % cutoff
             value = self.__get_pct_bases_covered_above_cutoff(input_table, cutoff)
             self.add_entry(colname, value)
+
+    def define_required_colnames(self):
+        return ["Mean_cov", "Cov_sd", "Min_cov", "Q1_cov", "Median_cov", "Q3_cov", "Max_cov"]
 
     @staticmethod
     def __format_cutoffs(cutoffs):
