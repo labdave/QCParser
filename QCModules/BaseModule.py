@@ -53,6 +53,9 @@ class BaseModule(object):
         # Make qc report
         self.make_qc_report()
 
+        # Make sure QCReport is valid
+        self.report.validate()
+
         # Get string representation of QCReport for printing to stdout
         self.output_qc_report()
 
