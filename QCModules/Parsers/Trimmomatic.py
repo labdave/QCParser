@@ -7,9 +7,9 @@ class Trimmomatic(BaseParser):
     INPUT_FILE_DESC = "Trimmomatic stderr log"
 
     def __init__(self, sys_args):
-        super(BaseParser, self).__init__(sys_args)
+        super(Trimmomatic, self).__init__(sys_args)
 
-    def make_qc_report(self):
+    def parse_input(self):
         # open input file
         first_line  = True
         is_paired   = True
@@ -35,3 +35,6 @@ class Trimmomatic(BaseParser):
                     self.add_entry("Input_Reads", input_reads)
                     self.add_entry("Trimmed_Reads", trimmed_reads)
                     break
+
+    def define_required_colnames(self):
+        return ["Input_Reads", "Trimmed_Reads"]
