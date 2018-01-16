@@ -22,6 +22,9 @@ class BaseParser(BaseModule):
         # Get sample name
         self.sample_name    = self.args.sample_name
 
+        # Get note string
+        self.note           = self.args.note
+
     def configure_arg_parser(self, base_parser):
 
         # Add input file arg parser
@@ -52,6 +55,13 @@ class BaseParser(BaseModule):
                                  required=True,
                                  help="Sample name.")
 
+        # Add sample name argument
+        base_parser.add_argument('-n', "--note",
+                                 action='store',
+                                 dest='note',
+                                 default="",
+                                 help="Note about file being parsed.")
+
         return base_parser
 
     def make_qc_report(self):
@@ -74,7 +84,8 @@ class BaseParser(BaseModule):
                               module=self.__class__.__name__,
                               source_file=self.input_file,
                               colname=colname,
-                              value=value)
+                              value=value,
+                              note=self.note)
 
     @abc.abstractmethod
     def parse_input(self):

@@ -11,7 +11,7 @@ class QCReport:
         self.report     = {} if report is None else report
         self.validate()
 
-    def add_entry(self, sample, module, source_file, colname, value):
+    def add_entry(self, sample, module, source_file, colname, value, note=""):
         # Add a data column for a sample to a QCReport
         # Add sample if it doesn't exist in report
         if sample not in self.report:
@@ -21,7 +21,8 @@ class QCReport:
         self.report[sample].append({"Module"     :module,
                                     "Source"     :source_file,
                                     "Name"       :colname,
-                                    "Value"      :value})
+                                    "Value"      :value,
+                                    "Note"       :note})
 
     def add_entries(self, sample, data):
         # Add multiple data columns to a QCReport
@@ -99,7 +100,7 @@ class QCReport:
         for sample_name, sample_data in self.report.iteritems():
             # Make sure every data point in every sample row contains only the required fields
             for sample_column in sample_data:
-                if not "".join(sorted(sample_column.keys())) == "ModuleNameSourceValue":
+                if not "".join(sorted(sample_column.keys())) == "ModuleNameNoteSourceValue":
                     logging.error("Entry in QCReport for sample %s does not contain required columns!" % sample_name)
                     raise QCReportError("Invalid QCReport schema.")
 
