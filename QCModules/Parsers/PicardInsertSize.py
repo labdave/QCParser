@@ -9,6 +9,8 @@ class PicardInsertSize(BaseParser):
         super(PicardInsertSize, self).__init__(sys_args)
 
     def parse_input(self):
+        in_histogram = False
+        ins_size_counts = []
         with open(self.input_file, "r") as fh:
             for line in fh:
 
@@ -28,6 +30,19 @@ class PicardInsertSize(BaseParser):
                     self.add_entry("Insert_Size_SD",        sd_insert_size)
                     self.add_entry("Min_Insert_Size",       min_insert_size)
                     self.add_entry("Max_Insert_Size",       max_insert_size)
+
+                elif "## HISTOGRAM" in line:
+                    in_histogram = True
+
+                elif in_histogram and "insert_size" not in line:
+                    # Get histogram count
+                    data = line.strip().split()
+                    if len(data) == 2:
+                        ins_size_counts.append(data[1])
+
+            # Add insert size distribution information
+            self.add_entry("Ins_Size_Dist", ";".join(ins_size_counts))
+
 
     def define_required_colnames(self):
         return ["Mean_Insert_Size", "Median_Insert_Size", "Insert_Size_SD", "Min_Insert_Size", "Max_Insert_Size"]
