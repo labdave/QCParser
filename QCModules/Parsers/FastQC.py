@@ -16,6 +16,8 @@ class FastQC(BaseParser):
         test_results    = []
         colname         = None
         value           = None
+        in_base_quality_section = False
+        qual_scores = []
 
         with open(self.input_file, "r") as fh:
 
@@ -53,6 +55,20 @@ class FastQC(BaseParser):
                     # Record results from test (e.g. PASS/WARN/FAIL)
                     line = line[2:]
                     test_results.append(line.split()[-1])
+
+                    # Check to see if we're in the per base sequence quality section
+                    test_name = " ".join(line.split()[:-1])
+                    if test_name == "Per base sequence quality":
+                        # Set flag
+                        in_base_quality_section = True
+                    else:
+                        in_base_quality_section = False
+
+                elif in_base_quality_section:
+                    if "#" not in line and ">>" not in line:
+                        # Get next quality score
+                        qual_scores.append(line.split()[1])
+
                 else:
                     colname = None
                     value = None
@@ -63,6 +79,9 @@ class FastQC(BaseParser):
 
         # Add FastQC test results
         self.add_entry(colname="FastQC_Tests", value=";".join(test_results))
+
+        # Add BaseQuality scores
+        self.add_entry(colname="AvgQualScores", value=";".join(qual_scores))
 
     def define_required_colnames(self):
         return ["FastQC_Tests", "Total_Reads", "LQ_Reads", "Read_Len", "GC"]
