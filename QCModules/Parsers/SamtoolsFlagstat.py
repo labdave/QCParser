@@ -75,10 +75,17 @@ class SamtoolsFlagstat(BaseParser):
             total_reads = tot_aligns - secondary_aligns - supp_aligns
             if is_paired:
                 logging.info("Paired in sequences detected for BAM: %s" % self.input_file)
-                self.add_entry("Real_Map_Rate", (prop_paired/total_reads) * 100)
+                if total_reads:
+                    self.add_entry("Real_Map_Rate", (prop_paired/total_reads) * 100)
+                else:
+                    self.add_entry("Real_Map_Rate", 0)
+
             else:
                 logging.info("Single-end sequences detected for BAM: %s" % self.input_file)
-                self.add_entry("Real_Map_Rate", (mapped_reads/total_reads) * 100)
+                if total_reads:
+                    self.add_entry("Real_Map_Rate", (mapped_reads/total_reads) * 100)
+                else:
+                    self.add_entry("Real_Map_Rate", 0)
 
     def define_required_colnames(self):
         return ["Tot_aligns", "Sec_aligns", "Supp_aligns", "PCR_dups", "Mapped_Reads",
