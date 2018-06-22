@@ -11,18 +11,16 @@ class Trimmomatic(BaseParser):
 
     def parse_input(self):
         # open input file
-        first_line  = True
         is_paired   = True
+        header_seen = False
         with open(self.input_file, "r") as fh:
             for line in fh:
                 # find line with number of reads input and surviving trimming
-                if first_line:
-                    if "TrimmomaticSE" in line:
-                        is_paired = False
-                    elif "TrimmomaticPE" not in line:
-                        raise QCParseException("Input file is not output from trimmomatic!")
-                    first_line = False
-
+                if not header_seen and "TrimmomaticSE" in line:
+                    is_paired   = False
+                    header_seen = True
+                elif not header_seen and "TrimmomaticPE" in line:
+                    header_seen = True
                 elif "Surviving" in line:
                     if is_paired:
                         # paired-end output
@@ -35,6 +33,10 @@ class Trimmomatic(BaseParser):
                     self.add_entry("Input_Reads", input_reads)
                     self.add_entry("Trimmed_Reads", trimmed_reads)
                     break
+
+            # Raise exception if header line never seen
+            if not header_seen:
+                raise QCParseException("Input file is not output from trimmomatic!")
 
     def define_required_colnames(self):
         return ["Input_Reads", "Trimmed_Reads"]
