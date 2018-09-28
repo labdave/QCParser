@@ -145,6 +145,7 @@ Additionally, **QCReports** satisfy the following properties:
     All **QCSamples** contain the same number of **QCEntries**
 
 2. Ordered
+
     All **QCSamples** contain the same **QCEntry** data types in the same order
     
     **QCEntries** are considered equivalent if they're produced by the same 'Module' and have the same 'Name' 
@@ -205,7 +206,10 @@ These functions are useful for combining QCReports from multiple files, samples,
 1. **PrintTable** Output QCReport to stdout in TSV table format
 
 
+``` sh
     ./QCReport PrintTable -i sample_1.qc_report.txt
+``` 
+
 
 **QCParser** will often be used multiple times within a workflow to parse information from multiple output files.
 To handle the issue of multiple QCReports, **QCParser** provides two convenience functions for safely combining QCReports
@@ -217,15 +221,18 @@ across modules, samples, or workflows.
     * Useful for combining QCReports from the same sample or samples into a single QCReport
 
     
+``` sh
     ./QCReport Cbind -i sample_1.fastqc.qc_report.txt sample_1.trimmomatic.qc_report.txt
+``` 
 
 
 3. **Rbind** Concatenate samples of two or more QCReports with same QCEntries
     
     * Useful for combining QCReports from multiple samples into single report
 
-    
+``` sh
     ./QCReport Rbind -i sample_1.qc_report.txt sample_2.qc_report.txt
+``` 
 
 
 ## Defining a custom parser module
@@ -311,8 +318,9 @@ This section discusses the process of defining your own custom module to create 
 3. Implement the parse_input() method
     
     Ideally, this function serves two purposes:
-        1. Parses required data types from file and adds to QCReport
-        2. Checks to make sure input file is correct format
+    
+      1. Parses required data types from file and adds to QCReport
+      2. Checks to make sure input file is correct format
         
     You certainly don't have to do any input_file checking, but it often helps. 
     If a file formatting error is detected, raise a QCParseException with a helpful message such as below:
@@ -438,6 +446,15 @@ $ sudo docker run --rm --user root alexwaldrop/qcparser:latest "./QCParser.py --
 [Docker]: https://www.docker.com/
 [Docker-client]: https://docs.docker.com/install/
 [Docker Hub]: https://hub.docker.com/
+
+
+## Project Status
+
+**QCParser** is actively under development. To request features, please contact the author listed below.
+
+## Authors
+
+* [Alex Waldrop](https://github.com/alexwaldrop)
 
 
 
