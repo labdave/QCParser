@@ -129,25 +129,25 @@ Below, we'll define the formal and more intuitive definitions of the QCReport fi
 ### Plainspeak definition
 Any QCReport produced by **QCParser** are guaranteed to meet the following:
 
-1. QCReport is a valid JSON object
-2. QCReport contains a set of 0 or more QCSamples
-3. QCSamples are lists containing 1 or more QCEntries
-4. QCEntries are JSON objects containing the following information
+1. **QCReport** is a valid JSON object
+2. **QCReport** contains a set of 0 or more **QCSamples**
+3. **QCSamples** are lists containing 1 or more **QCEntries**
+4. **QCEntries** are JSON objects containing the following information
     * Value: QC value parsed from a file
     * Name: QC value data type (e.g. "Raw Reads")
     * Source: Path to source file of QC value
     * Module: **QCParser** module used to parse source file
     * Note: Optional field for adding extra information
     
-Additionally, QCReports satisfy the following properties:
+Additionally, **QCReports** satisfy the following properties:
 1. Squareness
     
-    All QCSamples contain the same number of QCEntries
+    All **QCSamples** contain the same number of **QCEntries**
 
 2. Ordered
-    All QCSamples contain the same QCEntry data types in the same order
+    All **QCSamples** contain the same **QCEntry** data types in the same order
     
-    QCEntries are considered equivalent if they're produced by the same 'Module' and have the same 'Name' 
+    **QCEntries** are considered equivalent if they're produced by the same 'Module' and have the same 'Name' 
 
     
 ### Example QCReport
@@ -198,17 +198,17 @@ Additionally, QCReports satisfy the following properties:
     Sample_2    233990      59
 
 ## QCReport Manipulation functions
-**QCParser**contains three functions for the basic manipulation of QCReports. 
+**QCParser** contains three functions for the basic manipulation of QCReports. 
 
 These functions are useful for combining QCReports from multiple files, samples, or workflows into a single QCReport.
 
-1. **PrintTable**Output QCReport to stdout in TSV table format
+1. **PrintTable** Output QCReport to stdout in TSV table format
 
 
     ./QCReport PrintTable -i sample_1.qc_report.txt
 
-**QCParser**will often be used multiple times within a workflow to parse information from multiple output files.
-To handle the issue of multiple QCReports,**QCParser**provides two convenience functions for safely combining QCReports
+**QCParser** will often be used multiple times within a workflow to parse information from multiple output files.
+To handle the issue of multiple QCReports, **QCParser** provides two convenience functions for safely combining QCReports
 across modules, samples, or workflows. 
 
 
