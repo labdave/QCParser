@@ -26,8 +26,8 @@
 
 ## Setting up your system
   
-CloudConductor is currently designed only for *Linux* systems. 
-You will need to install and configure the following tools to run your pipelines on Google Cloud:  
+**QCParser** is currently designed only for *Linux* systems. 
+You will need to install and configure the following tool:  
 
 1. [Python](https://www.python.org/) v2.7.*
 
