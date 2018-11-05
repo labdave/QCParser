@@ -10,7 +10,7 @@ LABEL description="Bioinformatics utility parsing various NGS software log files
 LABEL tags="NGS QC"
 
 # Maintainer
-MAINTAINER Alex Waldrop <alex.waldrop@duke.edu>
+MAINTAINER Dave Lab <lab.dave@gmail.com>
 
 # update the OS related packages
 RUN apt-get update
@@ -25,7 +25,7 @@ RUN pip install matplotlib
 RUN mkdir tools
 
 # get the QCParser from GitHub
-RUN git clone https://github.com/alexwaldrop/QCParser.git /tools/QCParser
+RUN git clone --branch master https://github.com/labdave/QCParser.git /tools/QCParser
 
 ENV PATH /tools/QCParser:$PATH
 
