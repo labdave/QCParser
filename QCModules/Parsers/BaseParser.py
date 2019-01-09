@@ -78,14 +78,14 @@ class BaseParser(BaseModule):
         if not report_complete:
             raise QCParseException("One or more required columns was not parsed from the input!")
 
-    def add_entry(self, colname, value):
+    def add_entry(self, colname, value, note = None):
         # Wrapper method for class
         self.report.add_entry(sample=self.sample_name,
                               module=self.__class__.__name__,
                               source_file=self.input_file,
                               colname=colname,
                               value=value,
-                              note=self.note)
+                              note=self.note if note is None else note)
 
     @abc.abstractmethod
     def parse_input(self):
