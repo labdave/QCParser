@@ -1,5 +1,3 @@
-import logging
-
 from BaseParser import BaseParser
 from QCModules.BaseModule import QCParseException
 
@@ -16,76 +14,69 @@ class SamtoolsFlagstat(BaseParser):
         first_line = True
         with open(self.input_file, "r") as fh:
             for line in fh:
+                data = line.split()
+
                 if first_line:
                     # Check to make sure file actually samtools flagstat file
                     if "in total" not in line:
                         raise QCParseException("File provided is not output from samtools Flagstat")
 
                     # Get total reads in BAM file
-                    tot_aligns = float(line.split()[0])
+                    tot_aligns = int(data[0]) + int(data[2])
                     first_line = False
 
                 elif "secondary" in line:
-                    secondary_aligns = float(line.split()[0])
+                    secondary_aligns = int(data[0]) + int(data[2])
 
                 elif "supplementary" in line:
-                    supp_aligns = float(line.split()[0])
+                    supp_aligns = int(data[0]) + int(data[2])
 
                 elif "duplicates" in line:
                     # Get total duplicates
-                    pcr_dups = float(line.split()[0])
+                    pcr_dups = int(data[0]) + int(data[2])
 
                 elif "mapped (" in line:
                     # Get number aligned reads
-                    mapped_reads = float(line.split()[0])
+                    mapped_reads = int(data[0]) + int(data[2])
 
                 elif "paired in sequencing" in line:
                     # Get number, percent of properly paired reads
-                    paired = float(line.split()[0])
+                    paired = int(data[0]) + int(data[2])
 
                 elif "properly paired" in line:
                     # Get number, percent of properly paired reads
-                    prop_paired = float(line.split()[0])
+                    prop_paired = int(data[0]) + int(data[2])
 
                 elif "singletons" in line:
                     # Get number, percent of singleton reads (mate doesn't map)
-                    singletons = float(line.split()[0])
+                    singletons = int(data[0]) + int(data[2])
 
                 elif "with mate mapped to a different chr" in line and "(mapQ" not in line:
                     # Get number, percent of reads where mates map to different chromosome
-                    tot_mate_diff_chrom_lq = float(line.split()[0])
+                    tot_mate_diff_chrom_lq = int(data[0]) + int(data[2])
 
                 elif "with mate mapped to a different chr" in line and "(mapQ" in line:
                     # Get number, percent of reads where mates map to different chromosome with high quality
-                    tot_mate_diff_chrom_hq = float(line.split()[0])
+                    tot_mate_diff_chrom_hq = int(data[0]) + int(data[2])
 
             # Add basic samtools fields
-            self.add_entry("Tot_aligns", int(tot_aligns))
-            self.add_entry("Sec_aligns", int(secondary_aligns))
-            self.add_entry("Supp_aligns", int(supp_aligns))
-            self.add_entry("PCR_dups", int(pcr_dups))
-            self.add_entry("Mapped_Reads", int(mapped_reads))
-            self.add_entry("Proper_Paired", int(prop_paired))
-            self.add_entry("Singletons", int(singletons))
-            self.add_entry("Mate_Mapped_Diff_Chrom_LQ", int(tot_mate_diff_chrom_lq))
-            self.add_entry("Mate_Mapped_Diff_Chrom_HQ", int(tot_mate_diff_chrom_hq))
+            self.add_entry("Tot_aligns", tot_aligns)
+            self.add_entry("Sec_aligns", secondary_aligns)
+            self.add_entry("Supp_aligns", supp_aligns)
+            self.add_entry("PCR_dups", pcr_dups)
+            self.add_entry("Mapped_Reads", mapped_reads)
+            self.add_entry("Proper_Paired", prop_paired)
+            self.add_entry("Singletons", singletons)
+            self.add_entry("Mate_Mapped_Diff_Chrom_LQ", tot_mate_diff_chrom_lq)
+            self.add_entry("Mate_Mapped_Diff_Chrom_HQ", tot_mate_diff_chrom_hq)
 
             # Compute real mapping rates (number of actually good mappings / actual number of reads in bam)
-            is_paired   = paired > 0
             total_reads = tot_aligns - secondary_aligns - supp_aligns
-            if is_paired:
-                logging.info("Paired in sequences detected for BAM: %s" % self.input_file)
-                if total_reads:
-                    self.add_entry("Real_Map_Rate", (prop_paired/total_reads) * 100)
-                else:
-                    self.add_entry("Real_Map_Rate", 0)
-
+            total_mapped_reads = mapped_reads - secondary_aligns - supp_aligns
+            if total_reads:
+                self.add_entry("Real_Map_Rate", (total_mapped_reads * 100.0)/total_reads)
             else:
-                logging.info("Single-end sequences detected for BAM: %s" % self.input_file)
-                if total_reads:
-                    self.add_entry("Real_Map_Rate", (mapped_reads/total_reads) * 100)
-                else:
-                    self.add_entry("Real_Map_Rate", 0)
+                self.add_entry("Real_Map_Rate", 0)
 
     def define_required_colnames(self):
         return ["Tot_aligns", "Sec_aligns", "Supp_aligns", "PCR_dups", "Mapped_Reads",
