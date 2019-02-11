@@ -25,7 +25,7 @@ class BedtoolsCoverage(BaseParser):
                     continue
 
                 # split the stats
-                stats = line.strip().split(",")
+                stats = line.strip().split("\t")
 
                 # Add entries
                 self.add_entry("BoC_perc_baits_covered", stats[1])
