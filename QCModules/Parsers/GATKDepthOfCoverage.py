@@ -23,7 +23,7 @@ class GATKDepthOfCoverage(BaseParser):
             input_table = pd.read_table(self.input_file,
                                         header=0,
                                         names=input_column_names,
-                                        skip_footer=1,
+                                        skipfooter=1,
                                         engine='python'
                                         )
 
