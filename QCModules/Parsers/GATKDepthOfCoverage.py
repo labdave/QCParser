@@ -34,6 +34,7 @@ class GATKDepthOfCoverage(BaseParser):
                 logging.error("Received the following error msg:\n%s" % e.message)
             raise
 
+        mean_coverage                           = float(input_table.mean)  # percentage of bases covered by atleast 1X
         pct_bases_above_onex                    = float(input_table.oneX)                     # percentage of bases covered by atleast 1X
         pct_bases_above_tenX                    = float(input_table.tenX)                     # percentage of bases covered by atleast 10X
         pct_bases_above_twintyFiveX             = float(input_table.twintyFiveX)              # percentage of bases covered by atleast 25X
@@ -44,6 +45,8 @@ class GATKDepthOfCoverage(BaseParser):
         pct_bases_above_twoHundreadX            = float(input_table.twoHundreadX)             # percentage of bases covered by atleast 200X
         pct_bases_above_twoHundreadAndFiftyX    = float(input_table.twoHundreadAndFiftyX)     # percentage of bases covered by atleast 250X
         pct_bases_above_fivehundreadX           = float(input_table.fivehundreadX)            # percentage of bases covered by atleast 500X
+
+        self.add_entry("mean_coverage",                         mean_coverage)
         self.add_entry("pct_bases_above_onex",                  pct_bases_above_onex)
         self.add_entry("pct_bases_above_tenX",                  pct_bases_above_tenX)
         self.add_entry("pct_bases_above_twintyFiveX",           pct_bases_above_twintyFiveX)
@@ -56,7 +59,7 @@ class GATKDepthOfCoverage(BaseParser):
         self.add_entry("pct_bases_above_fivehundreadX",         pct_bases_above_fivehundreadX)
 
     def define_required_colnames(self):
-        return ["pct_bases_above_onex", "pct_bases_above_tenX", "pct_bases_above_twintyFiveX",
+        return ["mean_coverage", "pct_bases_above_onex", "pct_bases_above_tenX", "pct_bases_above_twintyFiveX",
                 "pct_bases_above_fiftyX", "pct_bases_above_seventyFiveX", "pct_bases_above_hundreadX",
                 "pct_bases_above_hundreadAndFiftyX", "pct_bases_above_twoHundreadAndFiftyX",
                 "pct_bases_above_twoHundreadX", "pct_bases_above_fivehundreadX"]
