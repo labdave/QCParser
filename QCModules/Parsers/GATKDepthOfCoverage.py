@@ -14,7 +14,7 @@ class GATKDepthOfCoverage(BaseParser):
     def parse_input(self):
 
         # Names to associated with input columns
-        input_column_names = ["sample_id", "total", "mean", "granular_third_quartile", "granular_median",
+        input_column_names = ["sample_id", "total", "mean_coverage", "granular_third_quartile", "granular_median",
                               "granular_first_quartile", "oneX", "tenX", "twintyFiveX", "fiftyX", "seventyFiveX",
                               "hundreadX", "hundreadAndFiftyX", "twoHundreadX", "twoHundreadAndFiftyX", "fivehundreadX"]
 
