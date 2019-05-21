@@ -34,7 +34,7 @@ class GATKDepthOfCoverage(BaseParser):
                 logging.error("Received the following error msg:\n%s" % e.message)
             raise
 
-        mean_coverage                           = float(input_table.mean)  # percentage of bases covered by atleast 1X
+        mean_coverage                           = float(input_table.mean_coverage)            # mean coverage value
         pct_bases_above_onex                    = float(input_table.oneX)                     # percentage of bases covered by atleast 1X
         pct_bases_above_tenX                    = float(input_table.tenX)                     # percentage of bases covered by atleast 10X
         pct_bases_above_twintyFiveX             = float(input_table.twintyFiveX)              # percentage of bases covered by atleast 25X
