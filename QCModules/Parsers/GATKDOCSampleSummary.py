@@ -3,13 +3,13 @@ import pandas as pd
 import numpy as np
 
 from BaseParser import BaseParser
-class GATKDepthOfCoverage(BaseParser):
+class GATKDOCsampleSummary(BaseParser):
 
     DESCRIPTION     = "Parse the depth of coverage stats from GATK DepthOfCoverage tool."
     INPUT_FILE_DESC = "GATK DepthOfCoverage TSV output"
 
     def __init__(self, sys_args):
-        super(GATKDepthOfCoverage, self).__init__(sys_args)
+        super(GATKDOCsampleSummary, self).__init__(sys_args)
 
     def parse_input(self):
 
