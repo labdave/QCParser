@@ -11,9 +11,20 @@ class StarGeneReadCounts(BaseParser):
     def __init__(self, sys_args):
         super(StarGeneReadCounts, self).__init__(sys_args)
 
-        self.ERCC_baits = ["ERCC-00004", "ERCC-00046", "ERCC-00051", "ERCC-00054", "ERCC-00060", "ERCC-00074",
-                           "ERCC-00077", "ERCC-00079", "ERCC-00085", "ERCC-00095", "ERCC-00097", "ERCC-00108",
-                           "ERCC-00116", "ERCC-00134", "ERCC-00142", "ERCC-00148", "ERCC-00156", "ERCC-00171"]
+        self.ercc_baits = self.args.ercc_baits
+
+    def configure_arg_parser(self, base_parser):
+        base_parser = super(StarGeneReadCounts, self).configure_arg_parser(base_parser)
+
+        # Add sample name argument
+        base_parser.add_argument("--ercc-baits",
+                                 nargs="+",
+                                 action='store',
+                                 dest='ercc_baits',
+                                 default=[],
+                                 help="List of ercc baits.")
+
+        return base_parser
 
     def parse_input(self):
 
@@ -48,8 +59,8 @@ class StarGeneReadCounts(BaseParser):
 
             # add read counts to the db
 
-            for bait in self.ERCC_baits:
+            for bait in self.ercc_baits:
                 self.add_entry(bait, input_table.loc[input_table[0] == bait].iat[0,1])
 
     def define_required_colnames(self):
-        return [bait for bait in self.ERCC_baits]
+        return [bait for bait in self.ercc_baits]
