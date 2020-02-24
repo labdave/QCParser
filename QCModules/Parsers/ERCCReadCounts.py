@@ -41,7 +41,10 @@ class ERCCReadCounts(BaseParser):
         # add read counts to the db
 
         for bait in self.ercc_baits:
-            self.add_entry(bait, input_table.loc[input_table[0] == bait].iat[0,1])
+            if bait in input_table.values:
+                self.add_entry(bait, input_table.loc[input_table[0] == bait].iat[0,1])
+            else:
+                self.add_entry(bait, 0)
 
     def define_required_colnames(self):
         return [bait for bait in self.ercc_baits]
