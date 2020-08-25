@@ -32,7 +32,7 @@ class ERCCReadCounts(BaseParser):
         try:
             # Get input table as pandas data frame
             input_table = pd.read_csv(self.input_file, sep=' ', header=None)
-        except BaseException, e:
+        except BaseException as e:
             logging.error("Unable to ercc read counts!")
             if e.message != "":
                 logging.error("Received the following error msg:\n%s" % e.message)
